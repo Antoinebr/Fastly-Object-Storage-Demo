@@ -50,6 +50,7 @@ router.get('/list-files', async (req, res) => {
     // Extract detailed information about each file
     const fileList = data.Contents.map(item => ({
       key: item.Key,
+      url: `/s3/get/${item.Key}`,
       lastModified: item.LastModified,
       size: item.Size,
       etag: item.ETag,

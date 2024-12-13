@@ -33,7 +33,7 @@ Create a `.env` file in the project root with the following content:
 ACCESS_KEY_ID=PUT_YOUR_ACCESS_KEY_ID_HERE
 SECRET_ACCESS_KEY=PUT_YOUR_SECRET_ACCESS_KEY_HERE
 PORT=PUT_YOUR_PORT_HERE
-PASSWORD=PUT_YOUR_ENCRYPTED_PASSWORD_HERE
+PASSWORD_HASH=PUT_YOUR_ENCRYPTED_PASSWORD_HERE
 BUCKET_NAME=PUT_YOUR_BUCKET_NAME_HERE
 REGION=PUT_YOUR_REGION_HERE
 ```
@@ -59,7 +59,7 @@ Access the app at http://localhost:3009.
 
 ### File Upload
 
-#### POST /upload
+#### POST /s3/upload
 
 Upload a file to the bucket. Requires authentication via x-password header.
 
@@ -74,7 +74,7 @@ curl -X POST http://localhost:3009/upload \
 
 ### Fetch File
 
-#### GET /file/:key
+#### GET /s3/file/:key
 
 Fetch a file by its key. Example:
 
@@ -85,7 +85,7 @@ curl http://localhost:3009/s3/get/pic.jpg
 
 ### List Files
 
-#### GET /list-files
+#### GET /s3/list-files
 
 Retrieve a list of all files in the bucket, along with metadata.
 

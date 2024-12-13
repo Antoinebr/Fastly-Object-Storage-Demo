@@ -8,6 +8,9 @@ const port = process.env.PORT || 3009;
 // Middleware for parsing incoming requests
 app.use(express.json());
 
+// Serve static files from the "public" directory
+app.use(express.static('public'));
+
 // Use fileRoutes
 app.use('/s3', fileRoutes);
 
