@@ -22,7 +22,7 @@ This project is a demonstration of **Fastly Object Storage**, a newly released s
 
 ### Prerequisites
 
-1. Node.js 
+1. Node.js or Docker
 2. Fastly Object Storage credentials
 
 ### Environment Variables
@@ -38,7 +38,19 @@ BUCKET_NAME=PUT_YOUR_BUCKET_NAME_HERE
 REGION=PUT_YOUR_REGION_HERE
 ```
 
-To generate a PASSWORD_HASH, you can use a tool like bcrypt in Node.js.
+To generate a PASSWORD_HASH, you can use a tool like bcrypt in Node.js or online tools such as https://bcrypt-generator.com/.
+
+
+
+### Docker 
+
+```
+make build 
+``` 
+
+```
+make run
+```
 
 ## Install Dependencies
 

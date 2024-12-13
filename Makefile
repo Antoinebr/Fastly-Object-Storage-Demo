@@ -11,7 +11,7 @@ build:
 
 # Run the Docker container
 run:
-	docker run -p $(PORT):$(PORT) --name $(CONTAINER_NAME) -d $(IMAGE_NAME)
+	docker run -p $(PORT):$(PORT) --name $(CONTAINER_NAME) -v ./.env:/usr/src/app/.env -d $(IMAGE_NAME)
 
 # Stop and remove the container
 stop:
@@ -32,3 +32,32 @@ exec:
 
 # Rebuild the Docker image and restart the container
 rebuild: stop clean build run
+
+# Stop and remove the Docker container
+.PHONY: clean
+clean: stop rm
+
+# Remove the Docker image
+.PHONY: rmi
+rmi:
+	docker rmi $(IMAGE_NAME)
+
+# View logs from the Docker container
+.PHONY: logs
+logs:
+	docker logs -f $(CONTAINER_NAME)
+
+# Shell into the running Docker container
+.PHONY: shell
+shell:
+	docker exec -it $(CONTAINER_NAME) /bin/bash
+
+# List all Docker images
+.PHONY: images
+images:
+	docker images
+
+# List all Docker containers
+.PHONY: ps
+ps:
+	docker ps -a
