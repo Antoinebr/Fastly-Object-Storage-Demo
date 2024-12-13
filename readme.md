@@ -30,12 +30,12 @@ This project is a demonstration of **Fastly Object Storage**, a newly released s
 Create a `.env` file in the project root with the following content:
 
 ```env
-accessKeyId=YOUR_FASTLY_ACCESS_KEY
-secretAccessKey=YOUR_FASTLY_SECRET_KEY
-bucketName=YOUR_BUCKET_NAME
-region=eu-central
-PASSWORD_HASH=YOUR_BCRYPT_HASHED_PASSWORD
-port=3009
+ACCESS_KEY_ID=PUT_YOUR_ACCESS_KEY_ID_HERE
+SECRET_ACCESS_KEY=PUT_YOUR_SECRET_ACCESS_KEY_HERE
+PORT=PUT_YOUR_PORT_HERE
+PASSWORD=PUT_YOUR_ENCRYPTED_PASSWORD_HERE
+BUCKET_NAME=PUT_YOUR_BUCKET_NAME_HERE
+REGION=PUT_YOUR_REGION_HERE
 ```
 
 To generate a PASSWORD_HASH, you can use a tool like bcrypt in Node.js.
