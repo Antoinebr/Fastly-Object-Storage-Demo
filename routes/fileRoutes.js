@@ -1,15 +1,68 @@
 const express = require('express');
 const multer = require('multer');
-const { S3Client, PutObjectCommand, GetObjectCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, GetObjectCommand, ListObjectsV2Command, CreateBucketCommand } = require('@aws-sdk/client-s3');
 const authenticate = require('../middleware/authMiddleware');
 const { getContentType } = require('../utils/fileUtils');
-const s3Client = require('../utils/s3Client');
+// const s3Client = require('../utils/s3Client');
+
+
+
 
 const router = express.Router();
 
 // Set up multer to handle file uploads
 const storage = multer.memoryStorage(); // Store file in memory (you can change to diskStorage if preferred)
 const upload = multer({ storage: storage });
+
+// Endpoint to create an S3 bucket
+router.post('/create-bucket', async (req, res) => {
+
+  const { bucketName, accessKeyId, region, secretKey } = req.body;
+
+  // Check each parameter individually
+  if (!bucketName) {
+    return res.status(400).json({ error: 'Missing required parameter: bucketName' });
+  }
+  if (!accessKeyId) {
+    return res.status(400).json({ error: 'Missing required parameter: accessKeyId' });
+  }
+  if (!region) {
+    return res.status(400).json({ error: 'Missing required parameter: region' });
+  }
+  if (!secretKey) {
+    return res.status(400).json({ error: 'Missing required parameter: secretKey' });
+  }
+
+
+    // Configuration for S3 Client
+  const s3Client = new S3Client({
+    region,
+    endpoint: `https://${region}.object.fastlystorage.app`,
+    credentials: {
+      accessKeyId,
+      secretAccessKey : secretKey
+    },
+    forcePathStyle: true,
+  });
+
+
+
+  if (!bucketName) {
+    return res.status(400).json({ error: 'Bucket name is required.' });
+  }
+
+  const command = new CreateBucketCommand({
+    Bucket: bucketName,
+  });
+
+  try {
+    await s3Client.send(command);
+    res.status(200).json({ message: `Bucket '${bucketName}' created successfully.` });
+  } catch (error) {
+    console.error('Error creating bucket:', error);
+    res.status(500).json({ error: 'Could not create the bucket.' });
+  }
+});
 
 // Endpoint to fetch and return the file
 router.get('/get/:key', async (req, res) => {

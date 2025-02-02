@@ -1,0 +1,62 @@
+<form id="settingsForm" class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+  <!-- Region Selector -->
+  <div class="mb-4">
+    <label for="region" class="block text-sm font-medium text-gray-700">Region</label>
+    <select id="region" name="region" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+      <option value="eu-central">eu-central</option>
+      <option value="us-central">us-central</option>
+    </select>
+  </div>
+
+  <!-- Access Key ID -->
+  <div class="mb-4">
+    <label for="accessKeyId" class="block text-sm font-medium text-gray-700">Access Key ID</label>
+    <input type="text" id="accessKeyId" name="accessKeyId"
+      class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+  </div>
+
+  <!-- Secret Key -->
+  <div class="mb-6">
+    <label for="secretKey" class="block text-sm font-medium text-gray-700">Secret Key</label>
+    <input type="password" id="secretKey" name="secretKey"
+      class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+  </div>
+
+  <!-- Save Button -->
+  <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Save Parameters</button>
+
+</form>
+
+
+
+<script>
+  document.getElementById('settingsForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the form from submitting
+
+    // Get form values
+    const region = document.getElementById('region').value;
+    const accessKeyId = document.getElementById('accessKeyId').value;
+    const secretKey = document.getElementById('secretKey').value;
+
+    // Save to localStorage
+    localStorage.setItem('region', region);
+    localStorage.setItem('accessKeyId', accessKeyId);
+    localStorage.setItem('secretKey', secretKey);
+
+    alert('Parameters saved to localStorage!');
+  });
+
+  // Load saved values from localStorage (if they exist)
+  document.addEventListener('DOMContentLoaded', function () {
+    const savedRegion = localStorage.getItem('region');
+    const savedAccessKeyId = localStorage.getItem('accessKeyId');
+    const savedSecretKey = localStorage.getItem('secretKey');
+
+    if (savedRegion) document.getElementById('region').value = savedRegion;
+    if (savedAccessKeyId) document.getElementById('accessKeyId').value = savedAccessKeyId;
+    if (savedSecretKey) document.getElementById('secretKey').value = savedSecretKey;
+  });
+
+
+
+</script>
