@@ -12,7 +12,7 @@ build:
 
 # Run the Docker container
 run:
-	docker run -p $(PORT):$(INTERNALPORT) --name $(CONTAINER_NAME) -v ./.env:/usr/src/app/.env -d $(IMAGE_NAME)
+	docker run -p $(PORT):$(INTERNALPORT) --name $(CONTAINER_NAME) -d $(IMAGE_NAME)
 
 # Stop and remove the container
 stop:

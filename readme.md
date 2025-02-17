@@ -1,13 +1,15 @@
-# Fastly Object Storage Demo
+# Fastly Object Storage easy UI
 
-This project is a demonstration of **Fastly Object Storage**, a newly released service (December 2024) designed for scalable, reliable, and high-performance object storage. The demo provides an easy-to-use API for uploading, fetching, listing, and managing files stored in a Fastly S3-compatible storage bucket.
+This project is an easy UI to interact with **Fastly Object Storage**. The app provides a user-friendly interface for creating a bucket, uploading, fetching, listing, and managing files stored in a Fastly S3-compatible storage bucket.
+
+![Image One](docs/assets/one.png)
+![Image Two](docs/assets/two.png)
+![Image Three](docs/assets/three.png)
 
 ## Features
 
 - **File Upload**: Securely upload files to a Fastly Object Storage bucket.
-- **File Retrieval**: Fetch files dynamically with proper MIME type headers.
 - **List Files**: List all files in the bucket along with metadata such as size and last modified date.
-- **Authentication**: Protect sensitive routes (like file uploads) with password authentication using hashed passwords (via bcrypt).
 
 ## Technologies Used
 
@@ -25,8 +27,18 @@ This project is a demonstration of **Fastly Object Storage**, a newly released s
 2. Fastly Object Storage credentials
 
 
+## 🐳 Docker 
 
-### Docker 
+
+Use the prebuidl Docker image (built on linux/arm64/v8)
+
+```
+docker run -d -p 3099:3009 antoinebr/fastly-object-storage-easy-ui:latest
+```
+
+Access the app at http://localhost:3099/
+
+### Build the Docker app yourself
 
 ```
 make build 
@@ -36,7 +48,18 @@ make build
 make run
 ```
 
-## Install Dependencies
+## Use with Node.js 
+
+You will need to have Node.js installed on your machine.
+
+```
+git clone https://github.com/Antoinebr/Fastly-Object-Storage-Demo.git 
+```
+
+```
+cd Fastly-Object-Storage-Demo 
+```
+
 
 ```
 npm install
@@ -45,7 +68,7 @@ npm install
 Run Locally
 
 ```
-node app.js
+npm run start
 ```
 
 Access the app at http://localhost:3009.
