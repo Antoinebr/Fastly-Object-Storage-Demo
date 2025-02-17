@@ -1,4 +1,6 @@
-<form id="settingsForm" class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+<form id="settingsForm" class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md mt-6">
+   
+   <h2 class="text-xl font-bold mb-4">Fastly Object Storage credentials</h2>
   <!-- Region Selector -->
   <div class="mb-4">
     <label for="region" class="block text-sm font-medium text-gray-700">Region</label>
@@ -26,7 +28,6 @@
   <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Save Parameters</button>
 
 </form>
-
 
 
 <script>
@@ -60,3 +61,255 @@
 
 
 </script>
+
+
+
+    <!-- Modal Overlay (Hidden by Default) -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <!-- Modal Container -->
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
+            <!-- Close Button -->
+            <button id="closeModal" class="absolute top-2 right-2 text-gray-600 hover:text-gray-800">&times;</button>
+
+            <h2 class="text-xl font-bold mb-4">Create a New Bucket</h2>
+
+            <!-- Form -->
+            <form id="createBucketForm" class="mb-4">
+                <!-- Bucket Name -->
+                <div class="mb-4">
+                    <label for="bucketName" class="block text-sm font-medium text-gray-700">Bucket Name</label>
+                    <input type="text" id="bucketName" name="bucketName"
+                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                </div>
+
+                <!-- Create Bucket Button -->
+                <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
+                    Create Bucket
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+<!-- Bucket List Section -->
+<div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md mt-6">
+  
+
+  <h2 class="text-xl font-bold mb-4">  <svg class="inline" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M3.015 8.844A1.628 1.628 0 0 1 4.625 7h23.75a1.63 1.63 0 0 1 1.612 1.844l-.002.009l-.36 2.354v.002a2.1 2.1 0 0 1-1.213 1.607l-2.124 16.188v.003C26.146 30.12 25.213 31 24.065 31H8.926c-1.15 0-2.082-.88-2.222-1.992v-.004l-.298-2.265c-1.351-.27-2.337-.941-2.833-2.066c-.565-1.278-.347-2.854.09-4.34c.34-1.15.854-2.384 1.428-3.611l-.512-3.908a2.1 2.1 0 0 1-1.213-1.607l-.35-2.35zM5.06 9l.285 1.913a.1.1 0 0 0 .1.087h22.11c.038 0 .083-.03.091-.086l.001-.005L27.94 9zm.562 11.766l-.04.133c-.412 1.4-.44 2.376-.18 2.966c.11.25.31.509.72.703zm2.819 6.11l.247 1.88c.02.166.148.244.238.244h15.14c.09 0 .217-.078.237-.244l.001-.006L26.371 13h-6.242a1 1 0 0 1 .739 1.462q-.406.758-.795 1.495c-1.525 2.881-2.9 5.482-4.538 7.385c-.979 1.138-2.082 2.07-3.413 2.691c-1.096.513-2.31.798-3.681.842M19.844 13H6.62l1.56 11.88c1.214-.013 2.221-.25 3.095-.658c1.011-.473 1.899-1.202 2.744-2.184c1.478-1.718 2.73-4.082 4.268-6.983q.394-.746.817-1.537a1 1 0 0 1 .74-.518"/></svg> Your buckets </h2
+
+  <!-- Refresh Button -->
+  <button id="refreshBuckets" class="border border-indigo-600  p-2 rounded-md">
+    <svg class="inline" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M12 20q-3.35 0-5.675-2.325T4 12t2.325-5.675T12 4q1.725 0 3.3.712T18 6.75V4h2v7h-7V9h4.2q-.8-1.4-2.187-2.2T12 6Q9.5 6 7.75 7.75T6 12t1.75 4.25T12 18q1.925 0 3.475-1.1T17.65 14h2.1q-.7 2.65-2.85 4.325T12 20"/></svg>
+    Refresh List
+  </button>
+
+  <!-- Create bucket  / Button to open modal  -->
+  <button id="openModal" class="border border-indigo-600 px-4 py-2 rounded-md ">
+        <svg class="inline" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"/></svg> 
+         Create Bucket
+  </button>
+
+  <!-- Bucket List Table -->
+  <table class="w-full mt-4 border-collapse border border-gray-300">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="border border-gray-300 p-2">Bucket Name</th>
+        <th class="border border-gray-300 p-2">Creation Date</th>
+        <th class="border border-gray-300 p-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="bucketList">
+      <!-- Buckets will be inserted here dynamically -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+  async function fetchBuckets() {
+    // Retrieve credentials from localStorage
+    const savedRegion = localStorage.getItem('region');
+    const savedAccessKeyId = localStorage.getItem('accessKeyId');
+    const savedSecretKey = localStorage.getItem('secretKey');
+
+    // Validate credentials
+    if (!savedRegion || !savedAccessKeyId || !savedSecretKey) {
+      alert('Missing required credentials in localStorage. Please set region, accessKeyId, and secretKey.');
+      return;
+    }
+
+    try {
+      // Send a GET request to fetch the bucket list
+      const response = await fetch(`/s3/list-buckets?region=${savedRegion}&accessKeyId=${savedAccessKeyId}&secretKey=${savedSecretKey}`);
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to retrieve buckets.');
+      }
+
+      // Populate the table with the bucket data
+      const bucketListElement = document.getElementById('bucketList');
+      bucketListElement.innerHTML = ''; // Clear existing entries
+
+      if (result.buckets && result.buckets.length > 0) {
+        result.buckets.forEach(bucket => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td class="border border-gray-300 p-2"> <a href="/bucket/${bucket.Name}" class="text-blue">${bucket.Name}</a></td>
+            <td class="border border-gray-300 p-2">${bucket.CreationDate ? new Date(bucket.CreationDate).toLocaleString() : 'N/A'}</td>
+            <td class="border border-gray-300 p-2">
+              <button class="deleteBucket  px-2 py-1 rounded border" data-bucket="${bucket.Name}">
+                🗑️ delete
+              </button>
+                <a href="/bucket/${bucket.Name}" class="border px-2 py-2 rounded">
+                <svg class="inline" width="24" height="24" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="m213.66 66.34l-40-40A8 8 0 0 0 168 24H88a16 16 0 0 0-16 16v16H56a16 16 0 0 0-16 16v144a16 16 0 0 0 16 16h112a16 16 0 0 0 16-16v-16h16a16 16 0 0 0 16-16V72a8 8 0 0 0-2.34-5.66M168 216H56V72h76.69L168 107.31zm32-32h-16v-80a8 8 0 0 0-2.34-5.66l-40-40A8 8 0 0 0 136 56H88V40h76.69L200 75.31Zm-56-32a8 8 0 0 1-8 8H88a8 8 0 0 1 0-16h48a8 8 0 0 1 8 8m0 32a8 8 0 0 1-8 8H88a8 8 0 0 1 0-16h48a8 8 0 0 1 8 8"/></svg>
+                View files
+              </a>
+            </td>
+          `;
+          bucketListElement.appendChild(row);
+        });
+
+        // Attach event listeners to delete buttons
+        document.querySelectorAll('.deleteBucket').forEach(button => {
+          button.addEventListener('click', async (event) => {
+            const bucketName = event.target.getAttribute('data-bucket');
+            console.log(bucketName);
+            await deleteBucket(bucketName);
+          });
+        });
+
+      } else {
+        bucketListElement.innerHTML = '<tr><td colspan="3" class="p-2 text-center">No buckets found.</td></tr>';
+      }
+    } catch (error) {
+      console.error('Error fetching buckets:', error);
+      alert('An error occurred while fetching the bucket list.');
+    }
+  }
+
+  async function deleteBucket(bucketName) {
+    if (!confirm(`Are you sure you want to delete bucket "${bucketName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    // Retrieve credentials from localStorage
+    const savedRegion = localStorage.getItem('region');
+    const savedAccessKeyId = localStorage.getItem('accessKeyId');
+    const savedSecretKey = localStorage.getItem('secretKey');
+
+    try {
+      const response = await fetch('/s3/delete-bucket', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bucketName,
+          region: savedRegion,
+          accessKeyId: savedAccessKeyId,
+          secretKey: savedSecretKey
+        })
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert(result.message);
+        await fetchBuckets(); // Refresh the bucket list after deletion
+      } else {
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error('Error deleting bucket:', error);
+      alert('An error occurred while deleting the bucket.');
+    }
+  }
+
+  // Fetch buckets when the page loads
+  document.addEventListener('DOMContentLoaded', fetchBuckets);
+
+  // Refresh bucket list on button click
+  document.getElementById('refreshBuckets').addEventListener('click', fetchBuckets);
+</script>
+
+
+<script>
+  document.getElementById('createBucketForm').addEventListener('submit', async (event) => {
+    event.preventDefault(); // Prevent the form from submitting the traditional way
+
+    // Get the bucket name from the form input
+    const bucketName = document.getElementById('bucketName').value.toLowerCase();
+
+    // Retrieve data from localStorage
+    const savedRegion = localStorage.getItem('region');
+    const savedAccessKeyId = localStorage.getItem('accessKeyId');
+    const savedSecretKey = localStorage.getItem('secretKey');
+
+    // Validate the bucket name and localStorage data
+    if (!bucketName) {
+      alert('Bucket name is required.');
+      return;
+    }
+    if (!savedRegion || !savedAccessKeyId || !savedSecretKey) {
+      alert('Missing required data in localStorage. Please ensure region, accessKeyId, and secretKey are set.');
+      return;
+    }
+
+    try {
+      // Send a POST request to the server
+      const response = await fetch('/s3/create-bucket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bucketName,
+          region: savedRegion,
+          accessKeyId: savedAccessKeyId,
+          secretKey: savedSecretKey,
+        }), // Include all required data in the request body
+      });
+
+      // Parse the JSON response
+      const result = await response.json();
+
+      // Handle the response
+      if (response.ok) {
+        await fetchBuckets();
+        alert(result.message); // Show success message
+      } else {
+        alert(result.error); // Show error message
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while creating the bucket.');
+    }
+  });
+</script>
+
+
+      <script>
+        const modalOverlay = document.getElementById('modalOverlay');
+        const openModal = document.getElementById('openModal');
+        const closeModal = document.getElementById('closeModal');
+
+        // Open modal on button click
+        openModal.addEventListener('click', () => {
+            modalOverlay.classList.remove('hidden');
+        });
+
+        // Close modal on clicking the close button or overlay
+        closeModal.addEventListener('click', () => {
+            modalOverlay.classList.add('hidden');
+        });
+
+        modalOverlay.addEventListener('click', (event) => {
+            if (event.target === modalOverlay) { // Close when clicking outside the modal content
+                modalOverlay.classList.add('hidden');
+            }
+        });
+    </script>

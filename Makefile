@@ -1,9 +1,10 @@
 # Name of the Docker image
-IMAGE_NAME=fastly-object-storage-demo-app
+IMAGE_NAME=fastly-object-storage-easy-ui
 # Name of the Docker container
-CONTAINER_NAME=fastly-object-storage-demo-container
+CONTAINER_NAME=fastly-object-storage-easy-ui-container
 # Port to expose
-PORT=3009
+PORT=3099
+INTERNALPORT=3009
 
 # Build the Docker image
 build:
@@ -11,7 +12,7 @@ build:
 
 # Run the Docker container
 run:
-	docker run -p $(PORT):$(PORT) --name $(CONTAINER_NAME) -v ./.env:/usr/src/app/.env -d $(IMAGE_NAME)
+	docker run -p $(PORT):$(INTERNALPORT) --name $(CONTAINER_NAME) -v ./.env:/usr/src/app/.env -d $(IMAGE_NAME)
 
 # Stop and remove the container
 stop:

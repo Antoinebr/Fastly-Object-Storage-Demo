@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const exphbs = require('express-handlebars');
 const fileRoutes = require('./routes/fileRoutes');
@@ -20,12 +19,9 @@ app.get('/', (req, res) => {
   res.render('index', { title: 'Homepage', message: 'Welcome to the Homepage!' });
 });
 
-app.get('/bucket', (req, res) => {
-  res.render('bucket', { title: 'Create Bucket', message: 'Create Bucket' });
-});
 
-app.get('/upload', (req, res) => {
-  res.render('upload', { title: 'Upload', message: 'Upload here' });
+app.get('/bucket/:bucketname', (req, res) => {
+  res.render('singleBucket', { title: 'Create Bucket', message: 'Create Bucket' });
 });
 
 // Use fileRoutes

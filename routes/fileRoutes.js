@@ -1,9 +1,8 @@
 const express = require('express');
 const multer = require('multer');
-const { S3Client, PutObjectCommand, GetObjectCommand, ListObjectsV2Command, CreateBucketCommand } = require('@aws-sdk/client-s3');
-const authenticate = require('../middleware/authMiddleware');
+const { S3Client, PutObjectCommand, GetObjectCommand, ListBucketsCommand, DeleteBucketCommand, ListObjectsV2Command, CreateBucketCommand } = require('@aws-sdk/client-s3');
 const { getContentType } = require('../utils/fileUtils');
-// const s3Client = require('../utils/s3Client');
+
 
 
 
@@ -64,6 +63,84 @@ router.post('/create-bucket', async (req, res) => {
   }
 });
 
+
+router.get('/list-buckets', async (req, res) => {
+  const { accessKeyId, region, secretKey } = req.query;
+
+  // Validate input parameters
+  if (!accessKeyId) {
+    return res.status(400).json({ error: 'Missing required parameter: accessKeyId' });
+  }
+  if (!region) {
+    return res.status(400).json({ error: 'Missing required parameter: region' });
+  }
+  if (!secretKey) {
+    return res.status(400).json({ error: 'Missing required parameter: secretKey' });
+  }
+
+  // Configure S3 Client
+  const s3Client = new S3Client({
+    region,
+    endpoint: `https://${region}.object.fastlystorage.app`,
+    credentials: {
+      accessKeyId,
+      secretAccessKey: secretKey
+    },
+    forcePathStyle: true,
+  });
+
+  try {
+    const command = new ListBucketsCommand({});
+    const response = await s3Client.send(command);
+
+    res.status(200).json({ buckets: response.Buckets });
+  } catch (error) {
+    console.error('Error listing buckets:', error);
+    res.status(500).json({ error: 'Could not retrieve the bucket list.' });
+  }
+});
+
+
+router.delete('/delete-bucket', async (req, res) => {
+  const { bucketName, accessKeyId, region, secretKey } = req.body;
+
+  // Validate input parameters
+  if (!bucketName) {
+    return res.status(400).json({ error: 'Missing required parameter: bucketName' });
+  }
+  if (!accessKeyId) {
+    return res.status(400).json({ error: 'Missing required parameter: accessKeyId' });
+  }
+  if (!region) {
+    return res.status(400).json({ error: 'Missing required parameter: region' });
+  }
+  if (!secretKey) {
+    return res.status(400).json({ error: 'Missing required parameter: secretKey' });
+  }
+
+  // Configure S3 Client
+  const s3Client = new S3Client({
+    region,
+    endpoint: `https://${region}.object.fastlystorage.app`,
+    credentials: {
+      accessKeyId,
+      secretAccessKey: secretKey
+    },
+    forcePathStyle: true,
+  });
+
+  try {
+    const command = new DeleteBucketCommand({ Bucket: bucketName });
+    await s3Client.send(command);
+
+    res.status(200).json({ message: `Bucket '${bucketName}' deleted successfully.` });
+  } catch (error) {
+    console.error('Error deleting bucket:', error);
+    res.status(500).json({ error: `Could not delete the bucket '${bucketName}'. It may not be empty or it may not exist.` });
+  }
+});
+
+
 // Endpoint to fetch and return the file
 router.get('/get/:key', async (req, res) => {
   const key = req.params.key; // The file name, e.g., 'pic.jpg'
@@ -88,6 +165,55 @@ router.get('/get/:key', async (req, res) => {
   } catch (error) {
     console.error('Error fetching file:', error);
     res.status(500).json({ error: 'Could not fetch the file.' });
+  }
+});
+
+
+router.get('/bucket/:bucketName', async (req, res) => {
+  const { bucketName } = req.params;
+  const { accessKeyId, region, secretKey } = req.query;
+
+  // Validate input parameters
+  if (!bucketName) {
+    return res.status(400).json({ error: 'Bucket name is required.' });
+  }
+  if (!accessKeyId) {
+    return res.status(400).json({ error: 'Missing required parameter: accessKeyId' });
+  }
+  if (!region) {
+    return res.status(400).json({ error: 'Missing required parameter: region' });
+  }
+  if (!secretKey) {
+    return res.status(400).json({ error: 'Missing required parameter: secretKey' });
+  }
+
+  // Configure S3 Client
+  const s3Client = new S3Client({
+    region,
+    endpoint: `https://${region}.object.fastlystorage.app`,
+    credentials: {
+      accessKeyId,
+      secretAccessKey: secretKey
+    },
+    forcePathStyle: true,
+  });
+
+  try {
+    // List objects in the bucket
+    const command = new ListObjectsV2Command({ Bucket: bucketName });
+    const response = await s3Client.send(command);
+
+    // Extract file details
+    const files = response.Contents ? response.Contents.map(file => ({
+      Key: file.Key,
+      LastModified: file.LastModified,
+      Size: file.Size
+    })) : [];
+
+    res.status(200).json({ bucket: bucketName, files });
+  } catch (error) {
+    console.error('Error listing files in bucket:', error);
+    res.status(500).json({ error: 'Could not retrieve the files in the bucket.' });
   }
 });
 
@@ -117,29 +243,72 @@ router.get('/list-files', async (req, res) => {
 });
 
 // Endpoint to upload a file to the S3 bucket
-router.post('/upload', authenticate, upload.single('file'), async (req, res) => {
+// router.post('/upload', authenticate, upload.single('file'), async (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).json({ error: 'No file uploaded.' });
+//   }
+
+//   const { originalname, buffer } = req.file; // Get the uploaded file's name and buffer (content)
+//   const contentType = getContentType(originalname); // Get the content type based on the file extension
+
+//   const command = new PutObjectCommand({
+//     Bucket: process.env.BUCKET_NAME,
+//     Key: originalname, // Use the original file name or generate a unique key
+//     Body: buffer,
+//     ContentType: contentType,
+//   });
+
+//   try {
+//     // Upload the file to S3
+//     await s3Client.send(command);
+//     res.status(200).json({ message: 'File uploaded successfully.' });
+//   } catch (error) {
+//     console.error('Error uploading file:', error);
+//     res.status(500).json({ error: 'Could not upload the file.' });
+//   }
+// });
+
+router.post('/bucket/:bucketName', upload.single('file'), async (req, res) => {
+  const { bucketName } = req.params;
+  const { accessKeyId, secretKey, region } = req.body;
+
+  // Validate input parameters
+  if (!accessKeyId || !secretKey || !region) {
+      return res.status(400).json({ error: 'Missing required credentials: accessKeyId, secretKey, or region.' });
+  }
   if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded.' });
+      return res.status(400).json({ error: 'No file uploaded.' });
   }
 
-  const { originalname, buffer } = req.file; // Get the uploaded file's name and buffer (content)
-  const contentType = getContentType(originalname); // Get the content type based on the file extension
-
-  const command = new PutObjectCommand({
-    Bucket: process.env.BUCKET_NAME,
-    Key: originalname, // Use the original file name or generate a unique key
-    Body: buffer,
-    ContentType: contentType,
+  // Configure S3 client
+  const s3Client = new S3Client({
+      region,
+      endpoint: `https://${region}.object.fastlystorage.app`,
+      credentials: {
+          accessKeyId,
+          secretAccessKey: secretKey
+      },
+      forcePathStyle: true,
   });
 
+  // Prepare S3 upload parameters
+  const params = {
+      Bucket: bucketName,
+      Key: req.file.originalname, // File name in the bucket
+      Body: req.file.buffer, // File data
+      ContentType: req.file.mimetype, // File MIME type
+  };
+
   try {
-    // Upload the file to S3
-    await s3Client.send(command);
-    res.status(200).json({ message: 'File uploaded successfully.' });
+      const command = new PutObjectCommand(params);
+      await s3Client.send(command);
+
+      res.status(200).json({ message: `File "${req.file.originalname}" uploaded successfully to bucket "${bucketName}".` });
   } catch (error) {
-    console.error('Error uploading file:', error);
-    res.status(500).json({ error: 'Could not upload the file.' });
+      console.error('Error uploading file:', error);
+      res.status(500).json({ error: 'Could not upload the file.' });
   }
 });
+
 
 module.exports = router;

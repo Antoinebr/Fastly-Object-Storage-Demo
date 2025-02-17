@@ -15,7 +15,6 @@ This project is a demonstration of **Fastly Object Storage**, a newly released s
 - **Express**: Web framework for creating API routes.
 - **AWS SDK for JavaScript v3**: To interact with Fastly's S3-compatible storage API.
 - **Multer**: Middleware for handling file uploads.
-- **bcrypt**: For securely hashing and verifying passwords.
 
 
 ## Getting Started
@@ -24,21 +23,6 @@ This project is a demonstration of **Fastly Object Storage**, a newly released s
 
 1. Node.js or Docker
 2. Fastly Object Storage credentials
-
-### Environment Variables
-
-Create a `.env` file in the project root with the following content:
-
-```env
-ACCESS_KEY_ID=PUT_YOUR_ACCESS_KEY_ID_HERE
-SECRET_ACCESS_KEY=PUT_YOUR_SECRET_ACCESS_KEY_HERE
-PORT=PUT_YOUR_PORT_HERE
-PASSWORD_HASH=PUT_YOUR_ENCRYPTED_PASSWORD_HERE
-BUCKET_NAME=PUT_YOUR_BUCKET_NAME_HERE
-REGION=PUT_YOUR_REGION_HERE
-```
-
-To generate a PASSWORD_HASH, you can use a tool like bcrypt in Node.js or online tools such as https://bcrypt-generator.com/.
 
 
 
@@ -59,52 +43,9 @@ npm install
 ```
 
 Run Locally
-```
 
+```
 node app.js
 ```
 
 Access the app at http://localhost:3009.
-
-
-## API Endpoints
-
-### File Upload
-
-#### POST /s3/upload
-
-Upload a file to the bucket. Requires authentication via x-password header.
-
-Example (using curl):
-
-```
-curl -X POST http://localhost:3009/upload \
-  -H "x-password: YOUR_PASSWORD" \
-  -F "file=@/path/to/your/file.jpg"
-```
-
-
-### Fetch File
-
-#### GET /s3/file/:key
-
-Fetch a file by its key. Example:
-
-
-```
-curl http://localhost:3009/s3/get/pic.jpg
-```
-
-### List Files
-
-#### GET /s3/list-files
-
-Retrieve a list of all files in the bucket, along with metadata.
-
-Contributions
-
-This project is intended as a demo and is not production-ready. Feel free to fork and modify it for your own experiments or projects.
-
-Author: Antoine Brossault
-Date: December 2024
-
