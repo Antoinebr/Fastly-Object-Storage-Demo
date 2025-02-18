@@ -2,9 +2,9 @@
 
 This project is an easy UI to interact with **Fastly Object Storage**. The app provides a user-friendly interface for creating a bucket, uploading, fetching, listing, and managing files stored in a Fastly S3-compatible storage bucket.
 
-![Image One](docs/assets/one.png)
-![Image Two](docs/assets/two.png)
-![Image Three](docs/assets/three.png)
+![Image One](https://raw.githubusercontent.com/Antoinebr/Fastly-Object-Storage-Demo/master/docs/assets/one.png)
+![Image Two](https://raw.githubusercontent.com/Antoinebr/Fastly-Object-Storage-Demo/master/docs/assets/two.png)
+![Image Three](https://raw.githubusercontent.com/Antoinebr/Fastly-Object-Storage-Demo/master/docs/assets/three.png)
 
 ## Features
 
@@ -27,8 +27,16 @@ This project is an easy UI to interact with **Fastly Object Storage**. The app p
 2. Fastly Object Storage credentials
 
 
-## 🐳 Docker 
+## Use with npm 
 
+
+Be sure you have [Node.js](https://nodejs.org/en/download) installed on your machine, then run:
+
+```
+npx fastly-object-storage-easy-ui
+```
+
+## 🐳 Docker 
 
 Use the prebuidl Docker image (built on linux/arm64/v8)
 
@@ -48,7 +56,7 @@ make build
 make run
 ```
 
-## Use with Node.js 
+## Dev
 
 You will need to have Node.js installed on your machine.
 

@@ -1,19 +1,22 @@
 {
-  "name": "fastly-object-storage-demo",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "fastly-object-storage-easy-ui",
+  "version": "1.0.3",
+  "description": "This project is an easy UI to interact with Fastly Object Storage. The app provides a user-friendly interface for creating a bucket, uploading, fetching, listing, and managing files stored in a Fastly S3-compatible storage bucket",
+  "main": "app.js",
+  "bin": {
+    "app": "app.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
     "start": "node app.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["Fastly","Object Sorage", "S3", "UI"],
+  "author": "Antoine Brossault",
+  "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.709.0",
-    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-handlebars": "^8.0.1",

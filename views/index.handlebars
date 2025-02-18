@@ -44,6 +44,11 @@
     localStorage.setItem('accessKeyId', accessKeyId);
     localStorage.setItem('secretKey', secretKey);
 
+    // Save to Cookies (expires in 7 days)
+    document.cookie = `region=${region}; path=/; max-age=${7 * 24 * 60 * 60}`;
+    document.cookie = `accessKeyId=${accessKeyId}; path=/; max-age=${7 * 24 * 60 * 60}`;
+    document.cookie = `secretKey=${secretKey}; path=/; max-age=${7 * 24 * 60 * 60}`;
+
     alert('Parameters saved to localStorage!');
   });
 
