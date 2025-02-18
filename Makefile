@@ -32,7 +32,19 @@ exec:
 	docker exec -it $(CONTAINER_NAME) /bin/bash
 
 # Rebuild the Docker image and restart the container
-rebuild: stop clean build run
+rebuild: 
+	stop clean build run
+
+# Retag the container before publishing it
+retag: 
+	docker tag fastly-object-storage-easy-ui  antoinebr/fastly-object-storage-easy-ui:latest
+
+# Push to docker hub
+push: 
+	docker push antoinebr/fastly-object-storage-easy-ui:latest 
+
+npm-push:
+	npm publish
 
 # Stop and remove the Docker container
 .PHONY: clean

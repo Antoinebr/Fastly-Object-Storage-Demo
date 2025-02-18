@@ -1,6 +1,6 @@
 {
   "name": "fastly-object-storage-easy-ui",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "This project is an easy UI to interact with Fastly Object Storage. The app provides a user-friendly interface for creating a bucket, uploading, fetching, listing, and managing files stored in a Fastly S3-compatible storage bucket",
   "main": "app.js",
   "bin": {
